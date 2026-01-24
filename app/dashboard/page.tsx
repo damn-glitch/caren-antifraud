@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Sidebar } from "@/components/dashboard/sidebar"
+import { SidebarProvider, useSidebar } from "@/components/dashboard/sidebar-context"
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { TransactionTable } from "@/components/dashboard/transaction-table"
 import { AlertsPanel } from "@/components/dashboard/alerts-panel"
@@ -13,7 +14,8 @@ import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
-export default function DashboardPage() {
+function DashboardContent() {
+  const { collapsed } = useSidebar()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<FraudAlert[]>([])
   const [historicalData, setHistoricalData] = useState<ReturnType<typeof generateHistoricalData>>([])
@@ -42,8 +44,6 @@ export default function DashboardPage() {
     setAlerts(initialAlerts)
     setHistoricalData(generateHistoricalData(30))
 
-    // Calculate initial stats
-    const blocked = initialTransactions.filter(t => t.status === 'flagged' || t.status === 'declined').length
     setStats({
       totalTransactions: 156842,
       fraudBlocked: 312,
@@ -96,7 +96,6 @@ export default function DashboardPage() {
 
   const handleViewTransaction = useCallback((transaction: Transaction) => {
     console.log("View transaction:", transaction)
-    // In a real app, this would open a modal or navigate to details page
   }, [])
 
   const addFraudulentTransaction = useCallback(() => {
@@ -119,28 +118,33 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-slate-950">
       <Sidebar />
 
-      <main className="ml-[280px] p-8">
+      <motion.main
+        initial={false}
+        animate={{ marginLeft: collapsed ? 72 : 240 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="min-h-screen p-6"
+      >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6"
         >
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-            <p className="text-slate-400">Welcome back, Alisher. Here&apos;s your fraud detection overview.</p>
+            <h1 className="text-2xl font-bold text-white mb-1">Dashboard</h1>
+            <p className="text-slate-400 text-sm">Welcome back, Alisher. Here&apos;s your fraud detection overview.</p>
           </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 px-4 py-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 px-3 py-1.5">
               <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse" />
               System Online
             </Badge>
             <Button onClick={addFraudulentTransaction} variant="warning" size="sm">
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-1" />
               Simulate Fraud
             </Button>
             <Button variant="outline" size="sm" className="border-slate-700">
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-1" />
               Refresh
             </Button>
           </div>
@@ -151,19 +155,19 @@ export default function DashboardPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8"
+          className="mb-6"
         >
           <StatsCards stats={stats} />
         </motion.div>
 
-        {/* Main Grid */}
-        <div className="grid grid-cols-12 gap-6">
+        {/* Main Grid - Responsive */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Fraud Trend Chart */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="col-span-8"
+            className="lg:col-span-8"
           >
             <FraudTrendChart historicalData={historicalData} />
           </motion.div>
@@ -173,7 +177,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="col-span-4"
+            className="lg:col-span-4"
           >
             <RiskDistributionChart />
           </motion.div>
@@ -183,7 +187,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="col-span-8"
+            className="lg:col-span-8"
           >
             <TransactionTable
               transactions={transactions}
@@ -196,7 +200,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="col-span-4"
+            className="lg:col-span-4"
           >
             <AlertsPanel
               alerts={alerts}
@@ -209,7 +213,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="col-span-4"
+            className="lg:col-span-4"
           >
             <TransactionVolumeChart historicalData={historicalData} />
           </motion.div>
@@ -219,7 +223,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="col-span-4"
+            className="lg:col-span-4"
           >
             <FraudAnalyzer />
           </motion.div>
@@ -229,12 +233,20 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
-            className="col-span-4"
+            className="lg:col-span-4"
           >
             <AmountSavedChart historicalData={historicalData} />
           </motion.div>
         </div>
-      </main>
+      </motion.main>
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <SidebarProvider>
+      <DashboardContent />
+    </SidebarProvider>
   )
 }

@@ -59,8 +59,8 @@ export function TransactionTable({ transactions, onViewDetails }: TransactionTab
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-auto max-h-[420px]">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-800/50">
                 <th className="text-left text-xs font-medium text-slate-400 p-4">Transaction</th>
