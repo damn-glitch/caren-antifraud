@@ -56,51 +56,47 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Base styles --- */
-:root {
-  --background: #020617;
-  --foreground: #f8fafc;
-}
+/* --- Base styles (in @layer base so Tailwind utilities can override) --- */
+@layer base {
+  :root {
+    --background: #020617;
+    --foreground: #f8fafc;
+  }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
+  html {
+    scroll-behavior: smooth;
+  }
 
-html {
-  scroll-behavior: smooth;
-}
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  min-height: 100vh;
-}
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
 
-::-webkit-scrollbar-track {
-  background: #0f172a;
-}
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
-/* Selection */
-::selection {
-  background: rgba(139, 92, 246, 0.3);
-  color: #fff;
+  /* Selection */
+  ::selection {
+    background: rgba(139, 92, 246, 0.3);
+    color: #fff;
+  }
 }
 
 /* Glow effects */
