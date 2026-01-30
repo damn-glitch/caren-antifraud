@@ -1,7 +1,62 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
+/* --- Dark mode via class strategy (matching v3 darkMode: 'class') --- */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* --- Theme tokens (replaces tailwind.config.js) --- */
+@theme inline {
+  /* Colors */
+  --color-background: #020617;
+  --color-foreground: #f8fafc;
+  --color-ring: #8b5cf6;
+
+  /* Font family */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Custom spacing for h-13 */
+  --spacing-13: 3.25rem;
+
+  /* Animations */
+  --animate-gradient: gradient-shift 3s ease infinite;
+  --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+  --animate-neural-pulse: neural-pulse 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-ring-expand: ring-expand 2s ease-out infinite;
+}
+
+/* --- Keyframes --- */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+@keyframes neural-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes ring-expand {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Base styles --- */
 :root {
   --background: #020617;
   --foreground: #f8fafc;
@@ -110,17 +165,6 @@ body {
 /* Smooth page transitions */
 .page-transition {
   animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Glassmorphism */
