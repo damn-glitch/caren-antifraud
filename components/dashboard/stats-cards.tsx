@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { TrendingUp, TrendingDown, Shield, AlertTriangle, DollarSign, Activity, Ban, CheckCircle } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { formatCurrency, formatNumber } from "@/lib/utils"
+import { useT } from "@/lib/locale-context"
 
 interface StatsCardsProps {
   stats: {
@@ -17,9 +18,11 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ stats }: StatsCardsProps) {
+  const t = useT()
+
   const cards = [
     {
-      title: "Total Transactions",
+      title: t.dashboard.totalTransactions,
       value: formatNumber(stats.totalTransactions),
       change: "+12.5%",
       trend: "up" as const,
@@ -28,7 +31,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgGradient: "from-violet-500/10 to-indigo-500/10",
     },
     {
-      title: "Fraud Blocked",
+      title: t.dashboard.fraudBlocked,
       value: formatNumber(stats.fraudBlocked),
       change: "-8.3%",
       trend: "down" as const,
@@ -37,7 +40,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgGradient: "from-rose-500/10 to-red-500/10",
     },
     {
-      title: "Amount Protected",
+      title: t.dashboard.amountProtected,
       value: formatCurrency(stats.amountProtected),
       change: "+23.1%",
       trend: "up" as const,
@@ -46,7 +49,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgGradient: "from-emerald-500/10 to-teal-500/10",
     },
     {
-      title: "Active Alerts",
+      title: t.dashboard.activeAlerts,
       value: formatNumber(stats.activeAlerts),
       change: stats.activeAlerts > 10 ? "+5" : "-2",
       trend: stats.activeAlerts > 10 ? "up" : "down",
@@ -55,7 +58,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgGradient: "from-amber-500/10 to-orange-500/10",
     },
     {
-      title: "Approval Rate",
+      title: t.dashboard.approvalRate,
       value: `${stats.approvalRate.toFixed(1)}%`,
       change: "+0.3%",
       trend: "up" as const,
@@ -64,7 +67,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
       bgGradient: "from-cyan-500/10 to-blue-500/10",
     },
     {
-      title: "Avg Response",
+      title: t.dashboard.avgResponse,
       value: `${stats.avgResponseTime}ms`,
       change: "-5ms",
       trend: "down" as const,

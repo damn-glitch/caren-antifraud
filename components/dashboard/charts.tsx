@@ -20,6 +20,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts"
+import { useT } from "@/lib/locale-context"
 
 interface ChartsProps {
   historicalData: {
@@ -35,12 +36,16 @@ interface ChartsProps {
 const COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981', '#ec4899']
 
 export function FraudTrendChart({ historicalData }: ChartsProps) {
+  const t = useT()
+
   return (
     <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-800/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-white">Fraud Detection Trends</CardTitle>
-          <Badge variant="outline" className="border-violet-500/30 text-violet-400">30 Days</Badge>
+          <CardTitle className="text-white">{t.dashboard.fraudTrend}</CardTitle>
+          <Badge variant="outline" className="border-violet-500/30 text-violet-400">
+            30 {t.common.days}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-6">
@@ -82,7 +87,7 @@ export function FraudTrendChart({ historicalData }: ChartsProps) {
               stroke="#ef4444"
               fill="url(#fraudGradient)"
               strokeWidth={2}
-              name="Fraud Attempts"
+              name={t.analytics.fraudAttempts}
             />
             <Area
               type="monotone"
@@ -90,7 +95,7 @@ export function FraudTrendChart({ historicalData }: ChartsProps) {
               stroke="#10b981"
               fill="url(#blockedGradient)"
               strokeWidth={2}
-              name="Blocked"
+              name={t.analytics.blocked}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -100,10 +105,12 @@ export function FraudTrendChart({ historicalData }: ChartsProps) {
 }
 
 export function TransactionVolumeChart({ historicalData }: ChartsProps) {
+  const t = useT()
+
   return (
     <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-800/50">
-        <CardTitle className="text-white">Transaction Volume</CardTitle>
+        <CardTitle className="text-white">{t.dashboard.transactionVolume}</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <ResponsiveContainer width="100%" height={250}>
@@ -131,7 +138,7 @@ export function TransactionVolumeChart({ historicalData }: ChartsProps) {
               dataKey="totalTransactions"
               fill="#8b5cf6"
               radius={[4, 4, 0, 0]}
-              name="Transactions"
+              name={t.transactions.title}
             />
           </BarChart>
         </ResponsiveContainer>
@@ -141,17 +148,19 @@ export function TransactionVolumeChart({ historicalData }: ChartsProps) {
 }
 
 export function RiskDistributionChart() {
+  const t = useT()
+
   const data = [
-    { name: 'Low Risk', value: 75, color: '#10b981' },
-    { name: 'Medium Risk', value: 15, color: '#f59e0b' },
-    { name: 'High Risk', value: 7, color: '#f97316' },
-    { name: 'Critical', value: 3, color: '#ef4444' },
+    { name: t.risk.low, value: 75, color: '#10b981' },
+    { name: t.risk.medium, value: 15, color: '#f59e0b' },
+    { name: t.risk.high, value: 7, color: '#f97316' },
+    { name: t.risk.critical, value: 3, color: '#ef4444' },
   ]
 
   return (
     <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-800/50">
-        <CardTitle className="text-white">Risk Distribution</CardTitle>
+        <CardTitle className="text-white">{t.dashboard.riskDistribution}</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <ResponsiveContainer width="100%" height={250}>
@@ -188,11 +197,13 @@ export function RiskDistributionChart() {
 }
 
 export function AmountSavedChart({ historicalData }: ChartsProps) {
+  const t = useT()
+
   return (
     <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-800/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-white">Amount Protected</CardTitle>
+          <CardTitle className="text-white">{t.dashboard.amountProtected}</CardTitle>
           <Badge variant="success">
             +${(historicalData.reduce((sum, d) => sum + d.amountSaved, 0) / 1000).toFixed(0)}K
           </Badge>
@@ -226,7 +237,7 @@ export function AmountSavedChart({ historicalData }: ChartsProps) {
                 borderRadius: '12px',
                 color: '#fff'
               }}
-              formatter={(value) => value !== undefined ? [`$${Number(value).toLocaleString()}`, 'Protected'] : ['', '']}
+              formatter={(value) => value !== undefined ? [`$${Number(value).toLocaleString()}`, t.dashboard.amountProtected] : ['', '']}
             />
             <Line
               type="monotone"

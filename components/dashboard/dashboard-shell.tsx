@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { SidebarProvider, useSidebar } from "@/components/dashboard/sidebar-context"
+import { LanguageToggle } from "@/components/ui/language-toggle"
 import { ReactNode } from "react"
 
 function ShellContent({ children }: { children: ReactNode }) {
@@ -17,6 +18,10 @@ function ShellContent({ children }: { children: ReactNode }) {
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="min-h-screen p-6"
       >
+        {/* Floating locale switch — stays reachable from every dashboard page. */}
+        <div className="mb-4 flex justify-end">
+          <LanguageToggle />
+        </div>
         {children}
       </motion.main>
     </div>

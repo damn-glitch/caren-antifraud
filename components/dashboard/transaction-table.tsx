@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Transaction } from "@/lib/fraud-detection"
 import { formatCurrency, getRiskLevel } from "@/lib/utils"
+import { useT } from "@/lib/locale-context"
 
 interface TransactionTableProps {
   transactions: Transaction[]
@@ -14,6 +15,8 @@ interface TransactionTableProps {
 }
 
 export function TransactionTable({ transactions, onViewDetails }: TransactionTableProps) {
+  const t = useT()
+
   const getStatusIcon = (status: Transaction['status']) => {
     switch (status) {
       case 'approved': return <CheckCircle className="w-4 h-4 text-emerald-400" />
@@ -25,10 +28,10 @@ export function TransactionTable({ transactions, onViewDetails }: TransactionTab
 
   const getStatusBadge = (status: Transaction['status']) => {
     switch (status) {
-      case 'approved': return <Badge variant="success">Approved</Badge>
-      case 'declined': return <Badge variant="destructive">Declined</Badge>
-      case 'flagged': return <Badge variant="warning">Flagged</Badge>
-      default: return <Badge variant="secondary">Pending</Badge>
+      case 'approved': return <Badge variant="success">{t.status.approved}</Badge>
+      case 'declined': return <Badge variant="destructive">{t.status.declined}</Badge>
+      case 'flagged': return <Badge variant="warning">{t.status.flagged}</Badge>
+      default: return <Badge variant="secondary">{t.status.pending}</Badge>
     }
   }
 
@@ -42,7 +45,7 @@ export function TransactionTable({ transactions, onViewDetails }: TransactionTab
     }
     return (
       <Badge variant={variants[level]}>
-        {score.toFixed(0)}% Risk
+        {score.toFixed(0)}% · {t.risk[level as keyof typeof t.risk]}
       </Badge>
     )
   }
@@ -51,10 +54,10 @@ export function TransactionTable({ transactions, onViewDetails }: TransactionTab
     <Card className="border-slate-800/50 bg-slate-900/50 backdrop-blur-sm">
       <CardHeader className="border-b border-slate-800/50">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-white">Live Transactions</CardTitle>
+          <CardTitle className="text-white">{t.dashboard.liveTransactions}</CardTitle>
           <Badge variant="outline" className="border-violet-500/30 text-violet-400">
             <span className="w-2 h-2 bg-violet-500 rounded-full mr-2 animate-pulse" />
-            Real-time
+            {t.common.active}
           </Badge>
         </div>
       </CardHeader>
@@ -63,12 +66,12 @@ export function TransactionTable({ transactions, onViewDetails }: TransactionTab
           <table className="w-full min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-800/50">
-                <th className="text-left text-xs font-medium text-slate-400 p-4">Transaction</th>
-                <th className="text-left text-xs font-medium text-slate-400 p-4">Merchant</th>
-                <th className="text-left text-xs font-medium text-slate-400 p-4">Amount</th>
-                <th className="text-left text-xs font-medium text-slate-400 p-4">Risk Score</th>
-                <th className="text-left text-xs font-medium text-slate-400 p-4">Status</th>
-                <th className="text-right text-xs font-medium text-slate-400 p-4">Actions</th>
+                <th className="text-left text-xs font-medium text-slate-400 p-4">{t.transactions.transaction}</th>
+                <th className="text-left text-xs font-medium text-slate-400 p-4">{t.transactions.merchant}</th>
+                <th className="text-left text-xs font-medium text-slate-400 p-4">{t.transactions.amount}</th>
+                <th className="text-left text-xs font-medium text-slate-400 p-4">{t.transactions.riskScore}</th>
+                <th className="text-left text-xs font-medium text-slate-400 p-4">{t.transactions.status}</th>
+                <th className="text-right text-xs font-medium text-slate-400 p-4">{t.transactions.actions}</th>
               </tr>
             </thead>
             <tbody>

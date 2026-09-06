@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { predictFraud, generatePCAFeatures } from '@/lib/fraud-detection'
+import { explainPrediction } from '@/lib/explainability'
 import { getRiskLevel } from '@/lib/utils'
 
 export async function POST(request: Request) {
@@ -33,6 +34,9 @@ export async function POST(request: Request) {
       recommendation = 'review'
     }
 
+    // SHAP-style attribution so the verdict is auditable, not just a number.
+    const explanation = explainPrediction(features, txAmount, riskScore)
+
     return NextResponse.json({
       success: true,
       analysis: {
@@ -42,7 +46,19 @@ export async function POST(request: Request) {
         confidence,
         recommendation,
         featureAnalysis,
-        modelVersion: 'CAREN-v2.1.0',
+        explanation: {
+          baseValue: explanation.baseValue,
+          contributions: explanation.contributions,
+          topDrivers: {
+            en: explanation.topDriversEn,
+            ru: explanation.topDriversRu,
+          },
+          narrative: {
+            en: explanation.narrativeEn,
+            ru: explanation.narrativeRu,
+          },
+        },
+        modelVersion: 'CAREN-v2.4.1',
         analysisTime: `${Math.floor(Math.random() * 30 + 15)}ms`,
         timestamp: new Date().toISOString(),
       },

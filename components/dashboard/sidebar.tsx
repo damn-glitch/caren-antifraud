@@ -17,28 +17,43 @@ import {
   Brain,
   Users,
   FileText,
+  Filter,
+  Search,
+  Network,
+  Landmark,
+  Waves,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
+import { useT } from "@/lib/locale-context"
+import type { TranslationKeys } from "@/lib/i18n"
 
-const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: Activity, label: "Transactions", href: "/dashboard/transactions" },
-  { icon: Bell, label: "Alerts", href: "/dashboard/alerts" },
-  { icon: BarChart3, label: "Analytics", href: "/dashboard/analytics" },
-  { icon: Brain, label: "AI Models", href: "/dashboard/models" },
-  { icon: Users, label: "Team", href: "/dashboard/team" },
-  { icon: FileText, label: "Reports", href: "/dashboard/reports" },
+type NavKey = keyof TranslationKeys["nav"]
+
+const menuItems: { icon: typeof LayoutDashboard; key: NavKey; href: string }[] = [
+  { icon: LayoutDashboard, key: "dashboard", href: "/dashboard" },
+  { icon: Activity, key: "transactions", href: "/dashboard/transactions" },
+  { icon: Bell, key: "alerts", href: "/dashboard/alerts" },
+  { icon: Filter, key: "triage", href: "/dashboard/triage" },
+  { icon: Search, key: "investigations", href: "/dashboard/investigations" },
+  { icon: Network, key: "rings", href: "/dashboard/rings" },
+  { icon: Landmark, key: "aml", href: "/dashboard/aml" },
+  { icon: Waves, key: "behavioral", href: "/dashboard/behavioral" },
+  { icon: BarChart3, key: "analytics", href: "/dashboard/analytics" },
+  { icon: Brain, key: "models", href: "/dashboard/models" },
+  { icon: Users, key: "team", href: "/dashboard/team" },
+  { icon: FileText, key: "reports", href: "/dashboard/reports" },
 ]
 
-const bottomItems = [
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-  { icon: HelpCircle, label: "Help", href: "/dashboard/help" },
+const bottomItems: { icon: typeof Settings; key: NavKey; href: string }[] = [
+  { icon: Settings, key: "settings", href: "/dashboard/settings" },
+  { icon: HelpCircle, key: "help", href: "/dashboard/help" },
 ]
 
 export function Sidebar() {
   const pathname = usePathname()
   const { collapsed, setCollapsed } = useSidebar()
+  const t = useT()
 
   return (
     <motion.aside
@@ -84,6 +99,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              title={collapsed ? t.nav[item.key] : undefined}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
                 isActive
@@ -95,7 +111,7 @@ export function Sidebar() {
               <item.icon className={cn("w-5 h-5 shrink-0", isActive && "text-violet-400")} />
               {!collapsed && (
                 <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
-                  {item.label}
+                  {t.nav[item.key]}
                 </span>
               )}
               {isActive && !collapsed && (
@@ -112,13 +128,14 @@ export function Sidebar() {
           <Link
             key={item.href}
             href={item.href}
+            title={collapsed ? t.nav[item.key] : undefined}
             className={cn(
               "flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors",
               collapsed && "justify-center px-2"
             )}
           >
             <item.icon className="w-5 h-5 shrink-0" />
-            {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{item.label}</span>}
+            {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{t.nav[item.key]}</span>}
           </Link>
         ))}
         <button className={cn(
@@ -126,7 +143,7 @@ export function Sidebar() {
           collapsed && "justify-center px-2"
         )}>
           <LogOut className="w-5 h-5 shrink-0" />
-          {!collapsed && <span className="text-sm font-medium whitespace-nowrap">Logout</span>}
+          {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{t.nav.logout}</span>}
         </button>
       </div>
 
@@ -142,7 +159,7 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex-1 min-w-0 overflow-hidden">
               <p className="text-sm font-medium text-white truncate">Alisher B.</p>
-              <p className="text-xs text-slate-500 truncate">Admin</p>
+              <p className="text-xs text-slate-500 truncate">{t.nav.admin}</p>
             </div>
           )}
         </div>
