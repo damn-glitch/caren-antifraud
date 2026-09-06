@@ -4,10 +4,26 @@ import { motion } from "framer-motion"
 import { Shield, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { LanguageToggle } from "@/components/ui/language-toggle"
+import { useLocale } from "@/lib/locale-context"
 import { useState } from "react"
+
+const NAV_LINKS = [
+  { href: '#features', label: { en: 'Features', ru: 'Возможности' } },
+  { href: '#metrics', label: { en: 'Metrics', ru: 'Метрики' } },
+  { href: '#research', label: { en: 'Research', ru: 'Исследование' } },
+  { href: '#pricing', label: { en: 'Pricing', ru: 'Тарифы' } },
+]
+
+const COPY = {
+  signIn: { en: 'Sign In', ru: 'Войти' },
+  dashboard: { en: 'Dashboard', ru: 'Панель' },
+}
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { locale } = useLocale()
+  const pick = (v: { en: string; ru: string }) => (locale === 'ru' ? v.ru : v.en)
 
   return (
     <motion.nav
@@ -32,24 +48,25 @@ export function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            {["Features", "Metrics", "Research", "Pricing"].map((item) => (
+            {NAV_LINKS.map((item) => (
               <Link
-                key={item}
-                href={`#${item.toLowerCase()}`}
+                key={item.href}
+                href={item.href}
                 className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
-                {item}
+                {pick(item.label)}
               </Link>
             ))}
           </div>
 
           {/* CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageToggle />
             <Button variant="ghost" className="text-slate-300">
-              Sign In
+              {pick(COPY.signIn)}
             </Button>
             <Link href="/dashboard">
-              <Button>Dashboard</Button>
+              <Button>{pick(COPY.dashboard)}</Button>
             </Link>
           </div>
 
@@ -70,22 +87,23 @@ export function Navbar() {
             className="md:hidden mt-2 rounded-2xl bg-slate-950/95 backdrop-blur-xl border border-slate-800/50 p-6"
           >
             <div className="flex flex-col gap-4">
-              {["Features", "Metrics", "Research", "Pricing"].map((item) => (
+              {NAV_LINKS.map((item) => (
                 <Link
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+                  key={item.href}
+                  href={item.href}
                   className="text-slate-400 hover:text-white transition-colors py-2"
                   onClick={() => setIsOpen(false)}
                 >
-                  {item}
+                  {pick(item.label)}
                 </Link>
               ))}
               <hr className="border-slate-800" />
+              <LanguageToggle className="self-start" />
               <Button variant="ghost" className="w-full justify-center text-slate-300">
-                Sign In
+                {pick(COPY.signIn)}
               </Button>
               <Link href="/dashboard">
-                <Button className="w-full">Dashboard</Button>
+                <Button className="w-full">{pick(COPY.dashboard)}</Button>
               </Link>
             </div>
           </motion.div>

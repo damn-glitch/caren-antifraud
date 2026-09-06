@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { SidebarProvider, useSidebar } from "@/components/dashboard/sidebar-context"
 import { LanguageToggle } from "@/components/ui/language-toggle"
+import { CommandPaletteHint } from "@/components/ui/command-palette"
 import { ReactNode } from "react"
 
 function ShellContent({ children }: { children: ReactNode }) {
@@ -14,12 +15,13 @@ function ShellContent({ children }: { children: ReactNode }) {
       <Sidebar />
       <motion.main
         initial={false}
-        animate={{ marginLeft: collapsed ? 72 : 240 }}
+        animate={{ marginLeft: collapsed ? 72 : 248 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="min-h-screen p-6"
       >
-        {/* Floating locale switch — stays reachable from every dashboard page. */}
-        <div className="mb-4 flex justify-end">
+        {/* Utility bar — reachable from every dashboard page. */}
+        <div className="mb-4 flex items-center justify-end gap-3">
+          <CommandPaletteHint />
           <LanguageToggle />
         </div>
         {children}
