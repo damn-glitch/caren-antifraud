@@ -1,11 +1,65 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Shield, Brain, Zap, Lock, ArrowRight, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useLocale } from "@/lib/locale-context"
+
+interface Particle {
+  x: number
+  y: number
+  drift: number
+  duration: number
+  delay: number
+}
+
+const COPY = {
+  badge: { en: 'AI-Powered Fraud Protection', ru: 'Защита от мошенничества на базе ИИ' },
+  tagline: {
+    en: 'Credit Analysis & Risk Evaluation Network',
+    ru: 'Сеть кредитного анализа и оценки рисков',
+  },
+  body: {
+    en: 'Eighteen intelligence modules covering detection, investigation, compliance and model governance — scoring every transaction in under 50ms at 99.94% accuracy.',
+    ru: 'Восемнадцать интеллектуальных модулей — обнаружение, расследование, комплаенс и управление моделями — оценивают каждую операцию менее чем за 50 мс с точностью 99,94%.',
+  },
+  launch: { en: 'Launch Dashboard', ru: 'Открыть панель' },
+  demo: { en: 'Watch Demo', ru: 'Смотреть демо' },
+  accuracy: { en: 'Accuracy', ru: 'Точность' },
+  protected: { en: 'Protected', ru: 'Защищено' },
+  responseTime: { en: 'Response Time', ru: 'Время отклика' },
+  uptime: { en: 'Uptime SLA', ru: 'Доступность SLA' },
+}
 
 export function Hero() {
+  const { locale } = useLocale()
+  const pick = (v: { en: string; ru: string }) => (locale === 'ru' ? v.ru : v.en)
+
+  // Particles are randomised on the client only — generating them during render
+  // would produce different markup on server and client and break hydration.
+  const [particles, setParticles] = useState<Particle[]>([])
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 20 }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        drift: Math.random() * -500,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 5,
+      }))
+    )
+  }, [])
+
+  const stats = [
+    { value: "99.94%", label: pick(COPY.accuracy), icon: Brain },
+    { value: "$2.1B+", label: pick(COPY.protected), icon: Shield },
+    { value: "<50ms", label: pick(COPY.responseTime), icon: Zap },
+    { value: "100%", label: pick(COPY.uptime), icon: Lock },
+  ]
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated background */}
@@ -39,23 +93,17 @@ export function Hero() {
         />
       </div>
 
-      {/* Floating particles */}
-      {[...Array(20)].map((_, i) => (
+      {/* Floating particles — populated client-side after mount */}
+      {particles.map((particle, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 bg-violet-400/50 rounded-full"
-          initial={{
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-            y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800),
-          }}
-          animate={{
-            y: [null, Math.random() * -500],
-            opacity: [0, 1, 0],
-          }}
+          initial={{ x: particle.x, y: particle.y, opacity: 0 }}
+          animate={{ y: particle.y + particle.drift, opacity: [0, 1, 0] }}
           transition={{
-            duration: Math.random() * 10 + 10,
+            duration: particle.duration,
             repeat: Infinity,
-            delay: Math.random() * 5,
+            delay: particle.delay,
           }}
         />
       ))}
@@ -70,7 +118,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 backdrop-blur-sm mb-8"
         >
           <Sparkles className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-medium text-violet-300">AI-Powered Fraud Protection</span>
+          <span className="text-sm font-medium text-violet-300">{pick(COPY.badge)}</span>
         </motion.div>
 
         {/* Main heading */}
@@ -91,17 +139,16 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-2xl md:text-3xl font-medium text-violet-200/80 mb-4"
         >
-          Credit Analysis & Risk Evaluation Network
+          {pick(COPY.tagline)}
         </motion.p>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-lg text-slate-400 max-w-2xl mx-auto mb-12"
+          className="text-lg text-slate-400 max-w-3xl mx-auto mb-12 leading-relaxed"
         >
-          The world&apos;s most advanced AI-powered anti-fraud system. Protecting billions in
-          transactions with 99.94% accuracy using cutting-edge machine learning.
+          {pick(COPY.body)}
         </motion.p>
 
         {/* CTA Buttons */}
@@ -113,12 +160,12 @@ export function Hero() {
         >
           <Link href="/dashboard">
             <Button size="xl" className="group">
-              Launch Dashboard
+              {pick(COPY.launch)}
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
           <Button size="xl" variant="outline" className="border-violet-500/30 text-violet-300 hover:text-white hover:border-violet-500/50">
-            Watch Demo
+            {pick(COPY.demo)}
           </Button>
         </motion.div>
 
@@ -129,12 +176,7 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
         >
-          {[
-            { value: "99.94%", label: "Accuracy", icon: Brain },
-            { value: "$2.1B+", label: "Protected", icon: Shield },
-            { value: "<50ms", label: "Response Time", icon: Zap },
-            { value: "100%", label: "Uptime SLA", icon: Lock },
-          ].map((stat, i) => (
+          {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.8 }}

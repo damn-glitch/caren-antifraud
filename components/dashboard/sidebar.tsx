@@ -4,24 +4,11 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Shield,
-  LayoutDashboard,
-  Activity,
-  Bell,
-  Settings,
-  HelpCircle,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  BarChart3,
-  Brain,
-  Users,
-  FileText,
-  Filter,
-  Search,
-  Network,
-  Landmark,
-  Waves,
+  Shield, LayoutDashboard, Activity, Bell, Settings, HelpCircle, LogOut,
+  ChevronLeft, ChevronRight, BarChart3, Brain, Users, FileText, Filter,
+  Network, Landmark, Waves, MessageSquare, KanbanSquare, ShieldCheck,
+  Scale, UserSearch, Globe, Handshake, Gauge, SlidersHorizontal, Radar,
+  ScrollText,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
@@ -30,22 +17,76 @@ import type { TranslationKeys } from "@/lib/i18n"
 
 type NavKey = keyof TranslationKeys["nav"]
 
-const menuItems: { icon: typeof LayoutDashboard; key: NavKey; href: string }[] = [
-  { icon: LayoutDashboard, key: "dashboard", href: "/dashboard" },
-  { icon: Activity, key: "transactions", href: "/dashboard/transactions" },
-  { icon: Bell, key: "alerts", href: "/dashboard/alerts" },
-  { icon: Filter, key: "triage", href: "/dashboard/triage" },
-  { icon: Search, key: "investigations", href: "/dashboard/investigations" },
-  { icon: Network, key: "rings", href: "/dashboard/rings" },
-  { icon: Landmark, key: "aml", href: "/dashboard/aml" },
-  { icon: Waves, key: "behavioral", href: "/dashboard/behavioral" },
-  { icon: BarChart3, key: "analytics", href: "/dashboard/analytics" },
-  { icon: Brain, key: "models", href: "/dashboard/models" },
-  { icon: Users, key: "team", href: "/dashboard/team" },
-  { icon: FileText, key: "reports", href: "/dashboard/reports" },
+interface NavItem {
+  icon: typeof LayoutDashboard
+  key: NavKey
+  href: string
+}
+
+interface NavGroup {
+  labelKey: NavKey
+  items: NavItem[]
+}
+
+const navGroups: NavGroup[] = [
+  {
+    labelKey: "groupOverview",
+    items: [
+      { icon: LayoutDashboard, key: "dashboard", href: "/dashboard" },
+      { icon: Activity, key: "transactions", href: "/dashboard/transactions" },
+      { icon: BarChart3, key: "analytics", href: "/dashboard/analytics" },
+    ],
+  },
+  {
+    labelKey: "groupDetection",
+    items: [
+      { icon: Bell, key: "alerts", href: "/dashboard/alerts" },
+      { icon: Filter, key: "triage", href: "/dashboard/triage" },
+      { icon: Network, key: "rings", href: "/dashboard/rings" },
+      { icon: Waves, key: "behavioral", href: "/dashboard/behavioral" },
+      { icon: UserSearch, key: "synthetic", href: "/dashboard/synthetic" },
+      { icon: Globe, key: "geo", href: "/dashboard/geo" },
+      { icon: Radar, key: "threats", href: "/dashboard/threats" },
+    ],
+  },
+  {
+    labelKey: "groupInvestigation",
+    items: [
+      { icon: Brain, key: "investigations", href: "/dashboard/investigations" },
+      { icon: KanbanSquare, key: "cases", href: "/dashboard/cases" },
+      { icon: MessageSquare, key: "copilot", href: "/dashboard/copilot" },
+    ],
+  },
+  {
+    labelKey: "groupCompliance",
+    items: [
+      { icon: Landmark, key: "aml", href: "/dashboard/aml" },
+      { icon: ShieldCheck, key: "screening", href: "/dashboard/screening" },
+      { icon: Scale, key: "regulatory", href: "/dashboard/regulatory" },
+      { icon: ScrollText, key: "sar", href: "/dashboard/sar" },
+      { icon: FileText, key: "audit", href: "/dashboard/audit" },
+    ],
+  },
+  {
+    labelKey: "groupOperations",
+    items: [
+      { icon: Gauge, key: "payments", href: "/dashboard/payments" },
+      { icon: Handshake, key: "affiliates", href: "/dashboard/affiliates" },
+      { icon: SlidersHorizontal, key: "rules", href: "/dashboard/rules" },
+      { icon: Users, key: "team", href: "/dashboard/team" },
+      { icon: FileText, key: "reports", href: "/dashboard/reports" },
+    ],
+  },
+  {
+    labelKey: "groupPlatform",
+    items: [
+      { icon: Brain, key: "models", href: "/dashboard/models" },
+      { icon: Gauge, key: "modelops", href: "/dashboard/modelops" },
+    ],
+  },
 ]
 
-const bottomItems: { icon: typeof Settings; key: NavKey; href: string }[] = [
+const bottomItems: NavItem[] = [
   { icon: Settings, key: "settings", href: "/dashboard/settings" },
   { icon: HelpCircle, key: "help", href: "/dashboard/help" },
 ]
@@ -58,7 +99,7 @@ export function Sidebar() {
   return (
     <motion.aside
       initial={false}
-      animate={{ width: collapsed ? 72 : 240 }}
+      animate={{ width: collapsed ? 72 : 248 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="fixed left-0 top-0 bottom-0 z-40 flex flex-col bg-slate-950 border-r border-slate-800/50 overflow-hidden"
     >
@@ -76,7 +117,6 @@ export function Sidebar() {
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
               className="text-lg font-bold text-white whitespace-nowrap"
             >
               CAREN
@@ -86,64 +126,80 @@ export function Sidebar() {
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="w-7 h-7 rounded-lg bg-slate-800/50 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto overflow-x-hidden">
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={collapsed ? t.nav[item.key] : undefined}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200",
-                isActive
-                  ? "bg-violet-500/10 text-violet-400 shadow-lg shadow-violet-500/5"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/50",
-                collapsed && "justify-center px-2"
-              )}
-            >
-              <item.icon className={cn("w-5 h-5 shrink-0", isActive && "text-violet-400")} />
-              {!collapsed && (
-                <span className="text-sm font-medium whitespace-nowrap overflow-hidden">
-                  {t.nav[item.key]}
-                </span>
-              )}
-              {isActive && !collapsed && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0" />
-              )}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto overflow-x-hidden">
+        {navGroups.map((group, groupIndex) => (
+          <div key={group.labelKey} className={cn(groupIndex > 0 && "mt-4")}>
+            {!collapsed && (
+              <p className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                {t.nav[group.labelKey]}
+              </p>
+            )}
+            {/* A divider stands in for the group label when collapsed. */}
+            {collapsed && groupIndex > 0 && (
+              <div className="mx-2 mb-2 h-px bg-slate-800/50" />
+            )}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={collapsed ? t.nav[item.key] : undefined}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200",
+                      isActive
+                        ? "bg-violet-500/10 text-violet-400"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/50",
+                      collapsed && "justify-center px-2"
+                    )}
+                  >
+                    <item.icon className={cn("w-4 h-4 shrink-0", isActive && "text-violet-400")} />
+                    {!collapsed && (
+                      <span className="text-[13px] font-medium whitespace-nowrap overflow-hidden">
+                        {t.nav[item.key]}
+                      </span>
+                    )}
+                    {isActive && !collapsed && (
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0" />
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Bottom items */}
-      <div className="px-3 py-3 border-t border-slate-800/50 space-y-1 shrink-0">
+      <div className="px-3 py-3 border-t border-slate-800/50 space-y-0.5 shrink-0">
         {bottomItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             title={collapsed ? t.nav[item.key] : undefined}
             className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors",
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors",
               collapsed && "justify-center px-2"
             )}
           >
-            <item.icon className="w-5 h-5 shrink-0" />
-            {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{t.nav[item.key]}</span>}
+            <item.icon className="w-4 h-4 shrink-0" />
+            {!collapsed && <span className="text-[13px] font-medium whitespace-nowrap">{t.nav[item.key]}</span>}
           </Link>
         ))}
         <button className={cn(
-          "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors",
+          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors",
           collapsed && "justify-center px-2"
         )}>
-          <LogOut className="w-5 h-5 shrink-0" />
-          {!collapsed && <span className="text-sm font-medium whitespace-nowrap">{t.nav.logout}</span>}
+          <LogOut className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="text-[13px] font-medium whitespace-nowrap">{t.nav.logout}</span>}
         </button>
       </div>
 

@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { LocaleProvider } from "@/lib/locale-context"
+import { ToastProvider } from "@/lib/toast-context"
+import { CommandPaletteProvider } from "@/components/ui/command-palette"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -22,7 +24,11 @@ export default function RootLayout({
   return (
     <html lang="ru" className="dark">
       <body className="font-sans antialiased">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <ToastProvider>
+            <CommandPaletteProvider>{children}</CommandPaletteProvider>
+          </ToastProvider>
+        </LocaleProvider>
       </body>
     </html>
   )

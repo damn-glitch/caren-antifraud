@@ -14,6 +14,7 @@ import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { LanguageToggle } from "@/components/ui/language-toggle"
+import { CommandPaletteHint } from "@/components/ui/command-palette"
 import { useT } from "@/lib/locale-context"
 
 function DashboardContent() {
@@ -123,7 +124,7 @@ function DashboardContent() {
 
       <motion.main
         initial={false}
-        animate={{ marginLeft: collapsed ? 72 : 240 }}
+        animate={{ marginLeft: collapsed ? 72 : 248 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="min-h-screen p-6"
       >
@@ -138,6 +139,7 @@ function DashboardContent() {
             <p className="text-slate-400 text-sm">{t.dashboard.welcome}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
+            <CommandPaletteHint />
             <LanguageToggle />
             <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 px-3 py-1.5">
               <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse" />
