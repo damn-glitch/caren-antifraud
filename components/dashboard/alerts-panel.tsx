@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FraudAlert } from "@/lib/fraud-detection"
+import { useT } from "@/lib/locale-context"
 
 interface AlertsPanelProps {
   alerts: FraudAlert[]
@@ -13,6 +14,8 @@ interface AlertsPanelProps {
 }
 
 export function AlertsPanel({ alerts, onResolve }: AlertsPanelProps) {
+  const t = useT()
+
   const getSeverityIcon = (severity: FraudAlert['severity']) => {
     switch (severity) {
       case 'critical': return <XCircle className="w-5 h-5 text-red-400" />
@@ -29,7 +32,7 @@ export function AlertsPanel({ alerts, onResolve }: AlertsPanelProps) {
       medium: 'warning',
       low: 'default',
     }
-    return <Badge variant={variants[severity]}>{severity.toUpperCase()}</Badge>
+    return <Badge variant={variants[severity]}>{t.risk[severity]}</Badge>
   }
 
   const getSeverityBg = (severity: FraudAlert['severity']) => {
@@ -54,15 +57,15 @@ export function AlertsPanel({ alerts, onResolve }: AlertsPanelProps) {
               <Bell className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-white">Fraud Alerts</CardTitle>
+              <CardTitle className="text-white">{t.alerts.title}</CardTitle>
               <p className="text-xs text-slate-500 mt-1">
-                {unresolvedAlerts.length} active alerts
+                {unresolvedAlerts.length} · {t.dashboard.activeAlerts}
               </p>
             </div>
           </div>
           {criticalCount > 0 && (
             <Badge variant="critical" className="animate-pulse">
-              {criticalCount} Critical
+              {criticalCount} · {t.risk.critical}
             </Badge>
           )}
         </div>
@@ -78,7 +81,7 @@ export function AlertsPanel({ alerts, onResolve }: AlertsPanelProps) {
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
                 <CheckCircle2 className="w-8 h-8 text-emerald-400" />
               </div>
-              <p className="text-slate-400">All clear! No active alerts.</p>
+              <p className="text-slate-400">{t.alerts.noAlerts}</p>
             </motion.div>
           ) : (
             unresolvedAlerts.map((alert, index) => (
@@ -102,7 +105,7 @@ export function AlertsPanel({ alerts, onResolve }: AlertsPanelProps) {
                       </div>
                       <p className="text-sm text-white mb-1">{alert.message}</p>
                       <p className="text-xs text-slate-500">
-                        Type: {alert.alertType.replace('_', ' ').toUpperCase()}
+                        {t.alerts.title}: {t.alertType[alert.alertType]}
                       </p>
                       <p className="text-xs text-slate-500 font-mono">
                         {alert.transactionId}

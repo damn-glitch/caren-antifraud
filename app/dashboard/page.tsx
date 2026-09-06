@@ -13,9 +13,12 @@ import { Transaction, FraudAlert, generateTransaction, generateAlert, generateHi
 import { RefreshCw, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { LanguageToggle } from "@/components/ui/language-toggle"
+import { useT } from "@/lib/locale-context"
 
 function DashboardContent() {
   const { collapsed } = useSidebar()
+  const t = useT()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [alerts, setAlerts] = useState<FraudAlert[]>([])
   const [historicalData, setHistoricalData] = useState<ReturnType<typeof generateHistoricalData>>([])
@@ -131,21 +134,22 @@ function DashboardContent() {
           className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6"
         >
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">Dashboard</h1>
-            <p className="text-slate-400 text-sm">Welcome back, Alisher. Here&apos;s your fraud detection overview.</p>
+            <h1 className="text-2xl font-bold text-white mb-1">{t.dashboard.title}</h1>
+            <p className="text-slate-400 text-sm">{t.dashboard.welcome}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
+            <LanguageToggle />
             <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 px-3 py-1.5">
               <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse" />
-              System Online
+              {t.common.systemOnline}
             </Badge>
             <Button onClick={addFraudulentTransaction} variant="warning" size="sm">
               <Plus className="w-4 h-4 mr-1" />
-              Simulate Fraud
+              {t.dashboard.simulateFraud}
             </Button>
             <Button variant="outline" size="sm" className="border-slate-700">
               <RefreshCw className="w-4 h-4 mr-1" />
-              Refresh
+              {t.common.refresh}
             </Button>
           </div>
         </motion.div>
